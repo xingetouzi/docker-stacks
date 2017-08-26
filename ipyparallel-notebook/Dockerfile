@@ -7,6 +7,8 @@ USER root
 
 RUN userdel $NB_USER && rm -rf /home/$NB_USER
 
+ENV XDG_CACHE_HOME ""
+
 WORKDIR /opt
 
 ENV CONDA_DIR /opt/conda
