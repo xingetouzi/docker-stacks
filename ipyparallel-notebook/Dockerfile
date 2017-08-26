@@ -41,7 +41,8 @@ conda config --set allow_softlinks False --system
 
 # Install Python 3 packages
 RUN conda install --quiet --yes \
-    'ipyparallel=6.0.*'
+    'ipyparallel=6.0.*' \
+    'nb_conda'
 
 # Create Python 2 and Install Python 2 packages
 # Install Python 2 packages
