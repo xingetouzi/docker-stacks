@@ -16,8 +16,8 @@ fi
 echo create ipython profile
 
 #create default ipython profile
-sudo -u ${USER} ${CONDA_DIR}/bin/fxdayu create_profile
-sudo -u ${USER} ${CONDA_DIR}/envs/python2/bin/fxdayu create_profile
+sudo -E PATH=${PATH} -u ${USER} ${CONDA_DIR}/bin/fxdayu create_profile
+sudo -E PATH=${PATH} -u ${USER} ${CONDA_DIR}/envs/python2/bin/fxdayu create_profile
 
 # update pip source
 sudo -u ${USER} mkdir -p ${HOME}/.pip && \
