@@ -82,10 +82,10 @@ RUN ln -s $CONDA_DIR/envs/python2/bin/pip $CONDA_DIR/bin/pip2 && \
 
 RUN jupyter nbextension install --sys-prefix --py ipyparallel  &&\
     jupyter nbextension enable --sys-prefix --py ipyparallel  &&\
-    jupyter serverextension enable --sys-prefix --py ipyparallel &&\
-    jupyter contrib nbextension install --sys-prefix && \
-    jupyter nbextensions_configurator enable --sys-prefix &&\
-    jupyter nbextensions_configurator enable --system
+    jupyter serverextension enable --sys-prefix --py ipyparallel
+#RUN jupyter contrib nbextension install --sys-prefix && \
+#    jupyter nbextensions_configurator enable --sys-prefix &&\
+#    jupyter nbextensions_configurator enable --system
 
 ENTRYPOINT ["tini", "--"]
 
