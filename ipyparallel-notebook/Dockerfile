@@ -105,8 +105,8 @@ RUN pip install --no-cache ${PIP_EXTRA} -r /opt/requirements.txt
 
 RUN ${CONDA_DIR}/envs/python2/bin/pip install --no-cache ${PIP_EXTRA} -r /opt/requirements.txt
 
-COPY ./submodule /opt/submodule
-
-RUN cd /opt/submodule && \
-ls -F1 | sed 's/\///g' | xargs -I {} bash -c "echo {} && cd {} && pip --no-cache install -q --force-reinstall ." && \
-cd ..
+#COPY ./submodule /opt/submodule
+#
+#RUN cd /opt/submodule && \
+#ls -F1 | sed 's/\///g' | xargs -I {} bash -c "echo {} && cd {} && pip --no-cache install -q --force-reinstall ." && \
+#cd ..
