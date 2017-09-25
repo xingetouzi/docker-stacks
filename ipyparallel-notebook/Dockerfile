@@ -5,7 +5,8 @@ FROM jupyter/scipy-notebook
 
 USER root
 
-RUN userdel $NB_USER # && rm -rf /home/$NB_USER
+RUN userdel $NB_USER
+# && rm -rf /home/$NB_USER
 
 WORKDIR /opt
 
