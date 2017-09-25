@@ -66,8 +66,6 @@ RUN conda update numba
 
 RUN pip install --no-cache ${PIP_EXTRA} -r /opt/requirements.txt
 
-RUN ${CONDA_DIR}/envs/python2/bin/pip install --no-cache ${PIP_EXTRA} -r /opt/requirements.txt
-
 #COPY ./submodule /opt/submodule
 #
 #RUN cd /opt/submodule && \
