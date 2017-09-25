@@ -1,6 +1,5 @@
 # Copyright (c) Jupyter Development Team.
-# Distributed under the terms of the Modified BSD License.
-FROM jupyter/minimal-notebook
+FROM jupyter/minimal-notebook:4.0
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
@@ -9,29 +8,32 @@ USER root
 # R pre-requisites
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    libxrender1 \
     fonts-dejavu \
     gfortran \
-    gcc && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    gcc && apt-get clean
 
-USER $NB_USER
+USER jovyan
 
 # R packages
-RUN conda install --quiet --yes \
-    'r-base=3.3.2' \
-    'r-irkernel=0.7*' \
+RUN conda config --add channels r
+RUN conda install --yes \
+    'r-base=3.2*' \
+    'r-irkernel=0.4*' \
     'r-plyr=1.8*' \
-    'r-devtools=1.12*' \
-    'r-tidyverse=1.0*' \
-    'r-shiny=0.14*' \
-    'r-rmarkdown=1.2*' \
-    'r-forecast=7.3*' \
-    'r-rsqlite=1.1*' \
+    'r-devtools=1.8*' \
+    'r-dplyr=0.4*' \
+    'r-ggplot2=1.0*' \
+    'r-tidyr=0.2*' \
+    'r-shiny=0.12*' \
+    'r-rmarkdown=0.7*' \
+    'r-forecast=5.8*' \
+    'r-stringr=0.6*' \
+    'r-rsqlite=1.0*' \
     'r-reshape2=1.4*' \
-    'r-nycflights13=0.2*' \
+    'r-nycflights13=0.1*' \
     'r-caret=6.0*' \
     'r-rcurl=1.95*' \
-    'r-crayon=1.3*' \
-    'r-randomforest=4.6*' && \
-    conda clean -tipsy && \
-    fix-permissions $CONDA_DIR
+    'r-randomforest=4.6*' && conda clean -yt
+
+USER root

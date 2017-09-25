@@ -1,6 +1,4 @@
-# Copyright (c) Jupyter Development Team.
-# Distributed under the terms of the Modified BSD License.
-FROM jupyter/scipy-notebook
+FROM jupyter/minimal-notebook:4.0
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
@@ -9,72 +7,94 @@ USER root
 # R pre-requisites
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    libxrender1 \
     fonts-dejavu \
     gfortran \
-    gcc && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    gcc && apt-get clean
 
 # Julia dependencies
-# install Julia packages in /opt/julia instead of $HOME
-ENV JULIA_PKGDIR=/opt/julia
-
-RUN . /etc/os-release && \
-    echo "deb http://ppa.launchpad.net/staticfloat/juliareleases/ubuntu $VERSION_CODENAME main" > /etc/apt/sources.list.d/julia.list && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3D3D3ACC && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    julia && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    # Show Julia where conda libraries are \
-    echo "push!(Libdl.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" >> /usr/etc/julia/juliarc.jl && \
-    # Create JULIA_PKGDIR \
-    mkdir $JULIA_PKGDIR && \
-    chown $NB_USER $JULIA_PKGDIR && \
-    fix-permissions $JULIA_PKGDIR
+    julia \
+    libnettle4 && apt-get clean
 
-USER $NB_USER
+USER jovyan
+
+# Install Python 3 packages
+RUN conda install --yes \
+    'ipywidgets=4.0*' \
+    'pandas=0.16*' \
+    'matplotlib=1.4*' \
+    'scipy=0.15*' \
+    'seaborn=0.6*' \
+    'scikit-learn=0.16*' \
+    'scikit-image=0.11*' \
+    'sympy=0.7*' \
+    'cython=0.22*' \
+    'patsy=0.3*' \
+    'statsmodels=0.6*' \
+    'cloudpickle=0.1*' \
+    'dill=0.2*' \
+    'numba=0.20*' \
+    'bokeh=0.9*' \
+    && conda clean -yt
+
+# Install Python 2 packages
+RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 \
+    'ipython=4.0*' \
+    'ipywidgets=4.0*' \
+    'pandas=0.16*' \
+    'matplotlib=1.4*' \
+    'scipy=0.15*' \
+    'seaborn=0.6*' \
+    'scikit-learn=0.16*' \
+    'scikit-image=0.11*' \
+    'sympy=0.7*' \
+    'cython=0.22*' \
+    'patsy=0.3*' \
+    'statsmodels=0.6*' \
+    'cloudpickle=0.1*' \
+    'dill=0.2*' \
+    'numba=0.20*' \
+    'bokeh=0.9*' \
+    pyzmq \
+    && conda clean -yt
 
 # R packages including IRKernel which gets installed globally.
-RUN conda config --system --add channels r && \
-    conda install --quiet --yes \
-    'rpy2=2.8*' \
-    'r-base=3.3.2' \
-    'r-irkernel=0.7*' \
+RUN conda config --add channels r
+RUN conda install --yes \
+    'r-base=3.2*' \
+    'r-irkernel=0.4*' \
     'r-plyr=1.8*' \
-    'r-devtools=1.12*' \
-    'r-tidyverse=1.0*' \
-    'r-shiny=0.14*' \
-    'r-rmarkdown=1.2*' \
-    'r-forecast=7.3*' \
-    'r-rsqlite=1.1*' \
+    'r-devtools=1.8*' \
+    'r-dplyr=0.4*' \
+    'r-ggplot2=1.0*' \
+    'r-tidyr=0.2*' \
+    'r-shiny=0.12*' \
+    'r-rmarkdown=0.7*' \
+    'r-forecast=5.8*' \
+    'r-stringr=0.6*' \
+    'r-rsqlite=1.0*' \
     'r-reshape2=1.4*' \
-    'r-nycflights13=0.2*' \
+    'r-nycflights13=0.1*' \
     'r-caret=6.0*' \
     'r-rcurl=1.95*' \
-    'r-crayon=1.3*' \
-    'r-randomforest=4.6*' && \
-    conda clean -tipsy && \
-    fix-permissions $CONDA_DIR
+    'r-randomforest=4.6*' && conda clean -yt
 
-# Add Julia packages
-# Install IJulia as jovyan and then move the kernelspec out
-# to the system share location. Avoids problems with runtime UID change not
+# Install IJulia packages as jovyan and then move the kernelspec out
+# to the system share location. Avoids problems with runtime UID change not 
 # taking effect properly on the .local folder in the jovyan home dir.
-RUN julia -e 'Pkg.init()' && \
-    julia -e 'Pkg.update()' && \
-    julia -e 'Pkg.add("HDF5")' && \
-    julia -e 'Pkg.add("Gadfly")' && \
-    julia -e 'Pkg.add("RDatasets")' && \
-    julia -e 'Pkg.add("IJulia")' && \
-    # Precompile Julia packages \
-    julia -e 'using HDF5' && \
-    julia -e 'using Gadfly' && \
-    julia -e 'using RDatasets' && \
-    julia -e 'using IJulia' && \
-    # move kernelspec out of home \
-    mv $HOME/.local/share/jupyter/kernels/julia* $CONDA_DIR/share/jupyter/kernels/ && \
+RUN julia -e 'Pkg.add("IJulia")' && \
+    mv /home/$NB_USER/.local/share/jupyter/kernels/* $CONDA_DIR/share/jupyter/kernels/ && \
     chmod -R go+rx $CONDA_DIR/share/jupyter && \
-    rm -rf $HOME/.local && \
-    fix-permissions $JULIA_PKGDIR $CONDA_DIR/share/jupyter
+    rm -rf /home/$NB_USER/.local/share
+RUN julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
+
+USER root
+
+# Install Python 2 kernel spec globally to avoid permission problems when NB_UID
+# switching at runtime.
+RUN $CONDA_DIR/envs/python2/bin/python \
+    $CONDA_DIR/envs/python2/bin/ipython \
+    kernelspec install-self
 
