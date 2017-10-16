@@ -1,3 +1,6 @@
+celery[rabbitmq]
+git+https://github.com/quantopian/pyfolio.git
+git+https://github.com/xingetouzi/alphalens.git
 git+https://github.com/xingetouzi/rqalpha.git
 fxdayu_data
 git+https://github.com/xingetouzi/rqalpha-mod-fxdayu-source.git
