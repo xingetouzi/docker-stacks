@@ -1,8 +1,8 @@
-celery[rabbitmq]
 git+https://github.com/quantopian/pyfolio.git
 git+https://github.com/xingetouzi/alphalens.git
 git+https://github.com/xingetouzi/rqalpha.git
 fxdayu_data
 git+https://github.com/xingetouzi/rqalpha-mod-fxdayu-source.git
 git+https://github.com/xingetouzi/rqalpha-mod-optimization.git
+git+https://github.com/xingetouzi/rqalpha-mod-trading-monitor.git
 git+https://github.com/xingetouzi/ipyparallel-mesos.git
