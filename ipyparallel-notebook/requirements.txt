@@ -4,6 +4,6 @@ git+https://github.com/xingetouzi/rqalpha.git
 fxdayu_data
 git+https://github.com/xingetouzi/rqalpha-mod-fxdayu-source.git
 git+https://github.com/xingetouzi/rqalpha-mod-optimization.git
-ssh://git@gitlab.fxdayu.com:22222/xingetouzi/rqalpha-mod-trading-monitor.git
-ssh://git@gitlab.fxdayu.com:22222/xingetouzi/rqalpha-mod-authority.git
+git+ssh://git@gitlab.fxdayu.com:22222/xingetouzi/rqalpha-mod-trading-monitor.git
+git+ssh://git@gitlab.fxdayu.com:22222/xingetouzi/rqalpha-mod-authority.git
 git+https://github.com/xingetouzi/ipyparallel-mesos.git
