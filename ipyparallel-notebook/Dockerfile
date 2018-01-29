@@ -3,19 +3,25 @@
 
 FROM jupyter/scipy-notebook
 
-USER root
-
-RUN userdel $NB_USER
-# && rm -rf /home/$NB_USER
-
 WORKDIR /opt
 
 ENV CONDA_DIR /opt/conda
+
+USER root
 
 # TA-lib dependencies
 RUN wget -O ta-lib.tar.gz http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
 tar -xzf ta-lib.tar.gz &&\
 cd ta-lib && ./configure --prefix=/usr && make && make install && cd ..
+
+# update conda settings
+RUN rm /opt/conda/.condarc && \
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/ --system && \
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ --system && \
+conda config --set show_channel_urls yes --system && \
+conda config --set allow_softlinks False --system
+
+USER jovyan
 
 # update pip source
 RUN mkdir -p ~/.pip && \
@@ -26,15 +32,8 @@ echo "[install]" >> ~/.pip/pip.conf && \
 echo "trusted-host=mirrors.aliyun.com" >> ~/.pip/pip.conf
 
 # activate jupyter_contrib
- RUN pip install jupyter_contrib_nbextensions && \
- pip install jupyter_nbextensions_configurator
-
-# update conda settings
-RUN rm /opt/conda/.condarc && \
-conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/ --system && \
-conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ --system && \
-conda config --set show_channel_urls yes --system && \
-conda config --set allow_softlinks False --system
+RUN pip install jupyter_contrib_nbextensions && \
+pip install jupyter_nbextensions_configurator
 
 # Install Python 3 packages
 RUN conda install --quiet --yes \
@@ -65,6 +64,8 @@ RUN pip install --no-cache ${PIP_EXTRA} TA-lib
 RUN conda update numba
 
 RUN pip install --no-cache ${PIP_EXTRA} -r /opt/requirements.txt
+
+USER root
 
 #COPY ./submodule /opt/submodule
 #
