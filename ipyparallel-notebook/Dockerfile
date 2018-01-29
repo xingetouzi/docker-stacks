@@ -40,6 +40,8 @@ RUN conda install --quiet --yes \
     'ipyparallel=6.0.*' \
     'nb_conda'
 
+USER root
+
 RUN jupyter nbextension install --sys-prefix --py ipyparallel  &&\
     jupyter nbextension enable --sys-prefix --py ipyparallel  &&\
     jupyter serverextension enable --sys-prefix --py ipyparallel
@@ -47,6 +49,8 @@ RUN jupyter nbextension install --sys-prefix --py ipyparallel  &&\
 RUN jupyter contrib nbextension install --sys-prefix && \
     jupyter nbextensions_configurator enable --sys-prefix &&\
     jupyter nbextensions_configurator enable --system
+
+USER jovyan
 
 ENTRYPOINT ["tini", "--"]
 
